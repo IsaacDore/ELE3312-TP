@@ -476,6 +476,11 @@
               <FileType>2</FileType>
               <FilePath>..\Src\fonction.asm</FilePath>
             </File>
+            <File>
+              <FileName>fct_count.asm</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Src\fct_count.asm</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
