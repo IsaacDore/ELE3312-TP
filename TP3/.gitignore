@@ -5,3 +5,4 @@
 */MDK-ARM/Enonce1
 *.uvguix*
 !*.gitkeep
+*.scvd
