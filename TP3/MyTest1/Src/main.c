@@ -50,7 +50,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+int MY_SUM(int a, int b, int c, int d);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -100,7 +100,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    printf("TEST %i\r\n", cnt++);
+    int result = MY_SUM(cnt, 1,2,3);
+    printf("TEST %i+1+2+3=%i\r\n", cnt, result);
+    ++cnt;
     HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
