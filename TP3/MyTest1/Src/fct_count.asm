@@ -1,6 +1,6 @@
             PRESERVE8
             AREA |.data|, DATA
-            mycount DCD 0
+mycount     DCD 0
             AREA |.text|, CODE, READONLY
             EXPORT fct_count
             IMPORT HAL_Delay

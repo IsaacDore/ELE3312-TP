@@ -101,10 +101,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    int result = MY_SUM(cnt, 1,2,3);
-    printf("TEST %i+1+2+3=%i\r\n", cnt, result);
-    ++cnt;
-    HAL_Delay(1000);
+    fct_count();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
