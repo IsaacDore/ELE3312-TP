@@ -51,6 +51,7 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 int MY_SUM(int a, int b, int c, int d);
+void fct_count(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
