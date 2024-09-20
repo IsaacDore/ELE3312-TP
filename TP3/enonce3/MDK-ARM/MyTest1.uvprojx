@@ -472,16 +472,6 @@
               <FilePath>../Src/stm32f4xx_hal_msp.c</FilePath>
             </File>
             <File>
-              <FileName>fonction.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Src\fonction.asm</FilePath>
-            </File>
-            <File>
-              <FileName>fct_count.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Src\fct_count.asm</FilePath>
-            </File>
-            <File>
               <FileName>positive.asm</FileName>
               <FileType>2</FileType>
               <FilePath>..\Src\positive.asm</FilePath>
