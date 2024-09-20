@@ -481,6 +481,11 @@
               <FileType>2</FileType>
               <FilePath>..\Src\fct_count.asm</FilePath>
             </File>
+            <File>
+              <FileName>positive.asm</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Src\positive.asm</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
