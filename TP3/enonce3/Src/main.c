@@ -105,11 +105,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   int cnt = 0;
   /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  
     printf("\r\n");
 
     int* value_ptr = values;
@@ -120,9 +116,6 @@ int main(void)
 
     printArray(result, 10);
 
-    break;
-    /* USER CODE BEGIN 3 */
-  }
   /* USER CODE END 3 */
 }
 
