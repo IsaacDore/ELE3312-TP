@@ -65,7 +65,7 @@ void printArray(int arr[], int size)
  int i;
  for (i=0; i < size; i++)
  printf("%d ", arr[i]);
- printf("n");
+ printf("\n");
 } 
 
 int values[10] = {-5, -6, 10, -1, 1, 0, 12, -4, 11, -43541};
@@ -110,6 +110,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    printf("\r\n");
+
     int* value_ptr = values;
     /* USER CODE END WHILE */
     for(int i =0; i<10;i++){
@@ -117,6 +119,8 @@ int main(void)
     }
 
     printArray(result, 10);
+
+    break;
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
