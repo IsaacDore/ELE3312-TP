@@ -115,6 +115,8 @@ int main(void)
     for(int i =0; i<10;i++){
       result[i] = positive(value_ptr++);
     }
+
+    printArray(result, 10);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
