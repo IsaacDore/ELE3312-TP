@@ -1,0 +1,8 @@
+*/MDK-ARM/log/*
+*/MDK-ARM/MyTest1
+*/MDK-ARM/RTE
+*/MDK-ARM/DebugConfig
+*/MDK-ARM/Enonce1
+*.uvguix*
+!*.gitkeep
+*.scvd
