@@ -119,7 +119,19 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    selectRow(1);HAL_Delay(10);
+int row1=readCol();
+printf("Row 1 : %x\r\n", row1);
+selectRow(2);HAL_Delay(10);
+int row2=readCol();
+printf("Row 2 : %x\r\n", row2);
+selectRow(3);HAL_Delay(10);
+int row3=readCol();
+printf("Row 3 : %x\r\n", row3);
+selectRow(4);HAL_Delay(10);
+int row4=readCol();
+printf("Row 4 : %x\r\n", row4);
+HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
