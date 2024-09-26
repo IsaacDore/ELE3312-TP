@@ -26,6 +26,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+
+#include "ili9341.h"
+#include "ili9341_gfx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +66,7 @@ enum Button {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+ili9341_t *_screen;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -184,7 +187,18 @@ int main(void) {
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
+                        Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
+                        TFT_DC_GPIO_Port, TFT_DC_Pin, isoLandscape, NULL, NULL,
+                        NULL, NULL, itsNotSupported, itnNormalized);
+  ili9341_fill_screen(_screen, ILI9341_BLACK);
+  ili9341_draw_line(_screen, ILI9341_YELLOW, 50, 200, 200, 200);
+  ili9341_draw_rect(_screen, ILI9341_BLUE, 40, 40, 50, 100);
+  ili9341_draw_circle(_screen, ILI9341_RED, 250, 100, 50);
+  ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
+                                   ILI9341_BLACK, 0, 0};
+  char text[] = {"! Hello !"};
+  ili9341_draw_string(_screen, text_attr, text);
   /* USER CODE END 2 */
 
   /* Infinite loop */
