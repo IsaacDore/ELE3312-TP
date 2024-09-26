@@ -27,7 +27,25 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+// order matters here
+enum Button {
+  B1 = 0,
+  B2,
+  B3,
+  BA,
+  B4,
+  B5,
+  B6,
+  BB,
+  B7,
+  B8,
+  B9,
+  BC,
+  BSTAR,
+  B0,
+  BDASH,
+  BD
+};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -73,17 +91,56 @@ void selectRow(int r) {
     HAL_GPIO_WritePin(R4_GPIO_Port, R4_Pin, GPIO_PIN_SET);
 }
 
-int readCol() {
+char readCol() {
   int result = 0;
   if (HAL_GPIO_ReadPin(C1_GPIO_Port, C1_Pin) == GPIO_PIN_RESET)
     result += 1;
   if (HAL_GPIO_ReadPin(C2_GPIO_Port, C2_Pin) == GPIO_PIN_RESET)
-    result += 2;
-  if (HAL_GPIO_ReadPin(C3_GPIO_Port, C3_Pin) == GPIO_PIN_RESET)
     result += 4;
+  if (HAL_GPIO_ReadPin(C3_GPIO_Port, C3_Pin) == GPIO_PIN_RESET)
+    result += 16;
   if (HAL_GPIO_ReadPin(C4_GPIO_Port, C4_Pin) == GPIO_PIN_RESET)
-    result += 8;
+    result += 64;
   return result;
+}
+
+unsigned int poll_keyboard_state(unsigned int prev_state) {
+  prev_state &= 0x55555555;
+  prev_state <<= 1;
+  unsigned int state = 0;
+  for (i = 4; i != 0; i--) {
+    selectRow(4);
+    HAL_Delay(10);
+    state <<= 8;
+    state |= readCol();
+  }
+  return state | prev_state;
+}
+
+char get_button(enum Button b, unsigned int k_state) {
+  unsigned int mask = 1;
+  mask <<= (b * 2);
+  return (k_state & mask != 0);
+}
+
+char get_button_held(enum Button b, unsigned int k_state) {
+  unsigned int mask = 0b11;
+  mask <<= (b * 2);
+  return (k_state & mask != 0);
+}
+
+char get_button_up(enum Button b, unsigned int k_state) {
+  k_state ^= 0x55555555;
+  unsigned int mask = 0b10;
+  mask <<= (b * 2);
+  return (k_state & mask != 0);
+}
+
+char get_button_down(enum Button b, unsigned int k_state) {
+  k_state ^= 0xAAAAAAAA;
+  unsigned int mask = 1;
+  mask <<= (b * 2);
+  return (k_state & mask != 0);
 }
 
 int fputc(int ch, FILE *f) {
