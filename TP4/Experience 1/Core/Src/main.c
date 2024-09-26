@@ -108,7 +108,7 @@ unsigned int poll_keyboard_state(unsigned int prev_state) {
   prev_state &= 0x55555555;
   prev_state <<= 1;
   unsigned int state = 0;
-  for (i = 4; i != 0; i--) {
+  for (int i = 4; i != 0; i--) {
     selectRow(4);
     HAL_Delay(10);
     state <<= 8;
@@ -120,27 +120,27 @@ unsigned int poll_keyboard_state(unsigned int prev_state) {
 char get_button(enum Button b, unsigned int k_state) {
   unsigned int mask = 1;
   mask <<= (b * 2);
-  return (k_state & mask != 0);
+  return ((k_state & mask) != 0);
 }
 
 char get_button_held(enum Button b, unsigned int k_state) {
   unsigned int mask = 0b11;
   mask <<= (b * 2);
-  return (k_state & mask != 0);
+  return ((k_state & mask) != 0);
 }
 
 char get_button_up(enum Button b, unsigned int k_state) {
   k_state ^= 0x55555555;
   unsigned int mask = 0b10;
   mask <<= (b * 2);
-  return (k_state & mask != 0);
+  return ((k_state & mask) != 0);
 }
 
 char get_button_down(enum Button b, unsigned int k_state) {
   k_state ^= 0xAAAAAAAA;
   unsigned int mask = 1;
   mask <<= (b * 2);
-  return (k_state & mask != 0);
+  return ((k_state & mask) != 0);
 }
 
 int fputc(int ch, FILE *f) {
