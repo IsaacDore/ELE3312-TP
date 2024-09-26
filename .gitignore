@@ -1,6 +1,6 @@
-*/MDK-ARM/log/*
-*/MDK-ARM/RTE
-*/MDK-ARM/DebugConfig
+log
+RTE
+DebugConfig
 *.uvguix*
 *.scvd
 !*.gitkeep
