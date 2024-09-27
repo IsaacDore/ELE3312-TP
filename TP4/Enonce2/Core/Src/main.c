@@ -109,59 +109,25 @@ char readCol() {
   return result;
 }
 
-unsigned int poll_keyboard_state(unsigned int prev_state) {
-  prev_state &= 0x55555555;
-  prev_state <<= 1;
-  unsigned int state = 0;
-  for (int i = 4; i != 0; i--) {
-    selectRow(4);
-    HAL_Delay(10);
-    state <<= 8;
-    state |= readCol();
-  }
-  return state | prev_state;
-}
-
-char get_button(enum Button b, unsigned int k_state) {
-  unsigned int mask = 1;
-  mask <<= (b * 2);
-  return ((k_state & mask) != 0);
-}
-
-char get_button_held(enum Button b, unsigned int k_state) {
-  unsigned int mask = 0b11;
-  mask <<= (b * 2);
-  return ((k_state & mask) != 0);
-}
-
-char get_button_up(enum Button b, unsigned int k_state) {
-  k_state ^= 0x55555555;
-  unsigned int mask = 0b10;
-  mask <<= (b * 2);
-  return ((k_state & mask) != 0);
-}
-
-char get_button_down(enum Button b, unsigned int k_state) {
-  k_state ^= 0xAAAAAAAA;
-  unsigned int mask = 1;
-  mask <<= (b * 2);
-  return ((k_state & mask) != 0);
-}
-
 int fputc(int ch, FILE *f) {
   HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
   return ch;
 }
 
+volatile int row = 0;
 volatile int hour = 0;
 volatile int min = 0;
 volatile int sec = 0;
 volatile int milli = 0;
 volatile int token = 1;
+volatile int keytoken = 0;
 
 // every ms
 void HAL_SYSTICK_Callback(void) {
-  milli++;
+  selectRow(row = ((row + 1) % 4));
+  int col = readCol();
+  keytoken |= col << (row * 4);
+  keytoken milli++;
   if (milli < 1000)
     return;
   milli = 0;
@@ -229,12 +195,31 @@ int main(void) {
     while (!token)
       ;
     token = 0;
+    if (keytoken & (1 << 0)) {
+      sec++;
+    }
+    if (keytoken & (1 << 1)) {
+      sec--;
+    }
+    if (keytoken & (1 << 2)) {
+      min++;
+    }
+    if (keytoken & (1 << 3)) {
+      min--;
+    }
+    if (keytoken & (1 << 4)) {
+      hour++;
+    }
+    if (keytoken & (1 << 5)) {
+      hour--;
+    }
     char buffer[20] = {0};
     sprintf(buffer, "%2i:%2i:%2i", hour, min, sec);
     ili9341_fill_screen(_screen, ILI9341_BLACK);
     ili9341_text_attr_t time_attr = {&ili9341_font_11x18, ILI9341_WHITE,
                                      ILI9341_BLACK, 0, 0};
     ili9341_draw_string(_screen, time_attr, buffer);
+    keytoken = 0;
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
