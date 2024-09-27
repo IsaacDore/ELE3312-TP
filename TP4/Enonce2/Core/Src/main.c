@@ -108,11 +108,11 @@ volatile int keytoken = 0;
 // every ms
 void HAL_SYSTICK_Callback(void) {
   milli++;
-  if ((milli % 10) == 0) {
-    selectRow(row = ((row + 1) % 4));
-    int col = readCol();
-    keytoken |= col << (row * 4);
-  }
+
+  selectRow(row = ((row + 1) % 4));
+  int col = readCol();
+  keytoken |= (col << (row * 4));
+
   if (milli < 1000) {
     return;
   }
