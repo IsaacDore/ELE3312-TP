@@ -1,0 +1,6 @@
+*log/*
+RTE
+DebugConfig
+*.uvguix*
+*.scvd
+!*.gitkeep
