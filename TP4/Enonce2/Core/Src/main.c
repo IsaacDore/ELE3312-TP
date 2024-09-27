@@ -33,24 +33,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-enum Button {
-  B1 = 0,
-  B2,
-  B3,
-  BA,
-  B4,
-  B5,
-  B6,
-  BB,
-  B7,
-  B8,
-  B9,
-  BC,
-  BSTAR,
-  B0,
-  BDASH,
-  BD
-};
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -114,35 +97,41 @@ int fputc(int ch, FILE *f) {
   return ch;
 }
 
-volatile int row = 0;
+int row = 0;
 volatile int hour = 0;
 volatile int min = 0;
 volatile int sec = 0;
-volatile int milli = 0;
+int milli = 0;
 volatile int token = 1;
 volatile int keytoken = 0;
 
 // every ms
 void HAL_SYSTICK_Callback(void) {
-  selectRow(row = ((row + 1) % 4));
-  int col = readCol();
-  keytoken |= col << (row * 4);
-  keytoken milli++;
-  if (milli < 1000)
+  milli++;
+  if ((milli % 10) == 0) {
+    selectRow(row = ((row + 1) % 4));
+    int col = readCol();
+    keytoken |= col << (row * 4);
+  }
+  if (milli < 1000) {
     return;
+  }
   milli = 0;
   sec++;
   token = 1;
-  if (sec < 60)
+  if (sec < 60) {
     return;
+  }
   sec = 0;
   min++;
-  if (min < 60)
+  if (min < 60) {
     return;
+  }
   min = 0;
   hour++;
-  if (hour < 24)
+  if (hour < 24) {
     return;
+  }
   hour = 0;
   return;
 }
@@ -192,9 +181,8 @@ int main(void) {
   /* USER CODE BEGIN WHILE */
   while (1) {
     /* USER CODE END WHILE */
-    while (!token)
+    while (token == 0)
       ;
-    token = 0;
     if (keytoken & (1 << 0)) {
       sec++;
     }
@@ -220,6 +208,7 @@ int main(void) {
                                      ILI9341_BLACK, 0, 0};
     ili9341_draw_string(_screen, time_attr, buffer);
     keytoken = 0;
+    token = 0;
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
