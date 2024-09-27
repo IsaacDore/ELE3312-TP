@@ -186,26 +186,44 @@ int main(void) {
     if (keytoken & (1 << 0)) {
       // printf("inc sec\n");
       sec++;
+      if (sec >= 60) {
+        sec = 0;
+      }
     }
     if (keytoken & (1 << 1)) {
       // printf("dec sec\n");
-      sec--;
+      sec -= 2;
+      if (sec < 0) {
+        sec = 0;
+      }
     }
     if (keytoken & (1 << 2)) {
       // printf("inc min\n");
       min++;
+      if (min >= 60) {
+        min = 0;
+      }
     }
     if (keytoken & (1 << 3)) {
       // printf("dec min\n");
       min--;
+      if (min < 0) {
+        min = 0;
+      }
     }
     if (keytoken & (1 << 4)) {
       // printf("inc hour\n");
       hour++;
+      if (hour >= 25) {
+        hour = 0;
+      }
     }
     if (keytoken & (1 << 5)) {
       // printf("dec hour\n");
       hour--;
+      if (hour < 0) {
+        hour = 0;
+      }
     }
     char buffer[20] = {0};
     sprintf(buffer, "%2i:%2i:%2i", hour, min, sec);
@@ -215,6 +233,7 @@ int main(void) {
     ili9341_draw_string(_screen, time_attr, buffer);
     keytoken = 0;
     token = 0;
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
