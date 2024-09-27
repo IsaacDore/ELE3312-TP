@@ -1,3 +1,11 @@
+/*
+  laboratoire = 4
+  groupe = 2
+  date = 2024/septembre/27
+  auteurs = Isaac Doré, Arnaud Gagner, Justin Botbol
+  équipe = 05
+*/
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
