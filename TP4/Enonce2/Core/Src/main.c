@@ -61,19 +61,19 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void selectRow(int r) {
-  if (r == 1)
+  if (r == 0)
     HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
   else
     HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_SET);
-  if (r == 2)
+  if (r == 1)
     HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_RESET);
   else
     HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_SET);
-  if (r == 3)
+  if (r == 2)
     HAL_GPIO_WritePin(R3_GPIO_Port, R3_Pin, GPIO_PIN_RESET);
   else
     HAL_GPIO_WritePin(R3_GPIO_Port, R3_Pin, GPIO_PIN_SET);
-  if (r == 4)
+  if (r == 3)
     HAL_GPIO_WritePin(R4_GPIO_Port, R4_Pin, GPIO_PIN_RESET);
   else
     HAL_GPIO_WritePin(R4_GPIO_Port, R4_Pin, GPIO_PIN_SET);
@@ -84,11 +84,11 @@ char readCol() {
   if (HAL_GPIO_ReadPin(C1_GPIO_Port, C1_Pin) == GPIO_PIN_RESET)
     result += 1;
   if (HAL_GPIO_ReadPin(C2_GPIO_Port, C2_Pin) == GPIO_PIN_RESET)
-    result += 4;
+    result += 2;
   if (HAL_GPIO_ReadPin(C3_GPIO_Port, C3_Pin) == GPIO_PIN_RESET)
-    result += 16;
+    result += 4;
   if (HAL_GPIO_ReadPin(C4_GPIO_Port, C4_Pin) == GPIO_PIN_RESET)
-    result += 64;
+    result += 8;
   return result;
 }
 
@@ -184,21 +184,27 @@ int main(void) {
     while (token == 0)
       ;
     if (keytoken & (1 << 0)) {
+      // printf("inc sec\n");
       sec++;
     }
     if (keytoken & (1 << 1)) {
+      // printf("dec sec\n");
       sec--;
     }
     if (keytoken & (1 << 2)) {
+      // printf("inc min\n");
       min++;
     }
     if (keytoken & (1 << 3)) {
+      // printf("dec min\n");
       min--;
     }
     if (keytoken & (1 << 4)) {
+      // printf("inc hour\n");
       hour++;
     }
     if (keytoken & (1 << 5)) {
+      // printf("dec hour\n");
       hour--;
     }
     char buffer[20] = {0};
