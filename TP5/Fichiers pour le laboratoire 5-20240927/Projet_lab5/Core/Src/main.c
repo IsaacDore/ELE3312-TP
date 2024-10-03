@@ -60,8 +60,6 @@ void SystemClock_Config(void);
 void update_myball_array(void);
 void asm_init_myball_array(void);
 void asm_draw_all_ball_3D(struct ball_s *p_ball, int nb_ball);
-void asm_init_myball_array(void);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -116,22 +114,22 @@ int main(void) {
 
   draw_ball_3D(&myball);
 
-  int i;
+  //int i;
 
-  for (i = 0; i < MAX_BALL; i++) {
-    myball_array[i].radius = -1;
-  }
+  // for (i = 0; i < MAX_BALL; i++) {
+  //  myball_array[i].radius = -1;
+  // }
 
   // Experience 2
   // Uncomment here after to call the assembly function
-  // asm_init_myball_array();
+  asm_init_myball_array();
 
   // Experience 3
   // Comment here after to call the assembly function
-  // draw_all_ball_3D(myball_array, MAX_BALL);
+  draw_all_ball_3D(myball_array, MAX_BALL);
 
   // Uncomment here after to call the assembly function
-  asm_draw_all_ball_3D(myball_array, MAX_BALL);
+  // asm_draw_all_ball_3D(myball_array, MAX_BALL);
 
   /* USER CODE END 2 */
 

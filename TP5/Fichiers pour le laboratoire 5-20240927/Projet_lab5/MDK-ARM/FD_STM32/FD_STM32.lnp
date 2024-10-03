@@ -11,6 +11,7 @@
 "fd_stm32\stm32f4xx_it.o"
 "fd_stm32\stm32f4xx_hal_msp.o"
 "fd_stm32\ball.o"
+"fd_stm32\asm_init_myball_array.o"
 "fd_stm32\stm32f4xx_hal_spi.o"
 "fd_stm32\stm32f4xx_hal_rcc.o"
 "fd_stm32\stm32f4xx_hal_rcc_ex.o"
