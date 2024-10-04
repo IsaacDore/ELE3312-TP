@@ -24,10 +24,10 @@ LAB1                                            ; loop 1
                                                 ; only if x was -1
 			MOV 			r0,#320             ; r0 = 320
 			BL 				update_rand         ; update rand(320)
-			STRSH 			r0,[r5, #8]        ; x=rand
+			STRH 			r0,[r5, #8]        ; x=rand
 			MOV 			r0,#240             ; r0=240
 			BL 				update_rand         ; update rand(240)
-			STRSH 			r0,r5               ; y= rand
+			STRH 			r0,[r5]               ; y= rand
 			MOV 			r0,#10              ; r0=10
 			BL 				update_rand         ; update_rand(10)
 			STR 			r0,[r5,#12]         ; radius=rand
@@ -53,14 +53,16 @@ LAB1                                            ; loop 1
 			STR 			r1,[r5,#4]         ; color = r1  
 			B 				END_LOOP          
 			
-LAB2                                           ; if not initialized
+LAB2                                           ; if initialized
 			LDR 			r1,[r5,#12]        ; r1 = radius
 			ADDS 			r1,#3              ; r1 += 3
 			STR 			r1,[r5,#12]        ; radius = radius + 3
-			LDRSH 			r2,[r5,#8]         ; r2 = x
+			CMP             r1, #40
+            BGE             CLEAR_BALL
+            LDRSH 			r2,[r5,#8]         ; r2 = x
 			CMP 			r1,r2               
 			BGE 			CLEAR_BALL         ; if radius >= x clear
-			LDRSH 			r3,r5              ; r3 = y
+			LDRSH 			r3,[r5]              ; r3 = y
 			CMP 			r1,r3
 			BGE 			CLEAR_BALL         ; if radius >= y clear
 			RSB 			r2,r2,#320         ; r2 = 320 - x
@@ -71,7 +73,7 @@ LAB2                                           ; if not initialized
 			BLT 			END_LOOP
 			
 CLEAR_BALL
-			MOV 			r1,#0xFFFF
+			MOV 			r1,#0xFFFFFFFF
 			STR 			r1,[r5,#12]        ; radius = -1
 			
 END_LOOP

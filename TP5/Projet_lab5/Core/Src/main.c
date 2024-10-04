@@ -110,7 +110,9 @@ void update_myball_array() {
   }
 }
 
-void update_rand(int my_modulo) { asm_rand = rand() % my_modulo; }
+void asm_update_myball_array();
+
+int update_rand(int my_modulo) { return rand() % my_modulo; }
 
 /* USER CODE END 0 */
 
@@ -162,19 +164,19 @@ int main(void) {
 
   draw_ball_3D(&myball);
 
-  // int i;
+  int i;
 
-  // for (i = 0; i < MAX_BALL; i++) {
-  //  myball_array[i].radius = -1;
-  // }
+  for (i = 0; i < MAX_BALL; i++) {
+    myball_array[i].radius = -1;
+  }
 
   // Experience 2
   // Uncomment here after to call the assembly function
-  asm_init_myball_array();
+  // asm_init_myball_array();
 
   // Experience 3
   // Comment here after to call the assembly function
-  draw_all_ball_3D(myball_array, MAX_BALL);
+  // draw_all_ball_3D(myball_array, MAX_BALL);
 
   // Uncomment here after to call the assembly function
   // asm_draw_all_ball_3D(myball_array, MAX_BALL);
@@ -185,7 +187,7 @@ int main(void) {
   /* USER CODE BEGIN WHILE */
   while (1) {
     draw_all_ball_3D(myball_array, MAX_BALL);
-    update_myball_array();
+    asm_update_myball_array();
     HAL_Delay(1000);
   }
 }
