@@ -2,10 +2,10 @@
 #define BALL_H
 
 struct ball_s {
-	int x;
-	int y;
-	short radius;
-	short color;
+	short y;
+	int color;
+	short x;
+	int radius;
 };
 
 void draw_ball_3D(struct ball_s *p_ball);

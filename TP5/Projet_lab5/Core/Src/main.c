@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "gpio.h"
 #include "spi.h"
+#include "stdlib.h"
 #include "usart.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -64,6 +65,53 @@ void asm_draw_all_ball_3D(struct ball_s *p_ball, int nb_ball);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void update_myball_array() {
+  for (int i = 0; i < MAX_BALL; i++) {
+    if (myball_array[i].radius == -1) {
+      myball_array[i].x = rand() % 320;
+      myball_array[i].y = rand() % 240;
+      myball_array[i].radius = rand() % 10;
+      switch (rand() % 7 + 1) {
+      case 0:
+        myball_array[i].color = ILI9341_BLACK;
+        break;
+      case 1:
+        myball_array[i].color = ILI9341_BLUE;
+        break;
+      case 2:
+        myball_array[i].color = ILI9341_RED;
+        break;
+      case 3:
+        myball_array[i].color = ILI9341_GREEN;
+        break;
+      case 4:
+        myball_array[i].color = ILI9341_CYAN;
+        break;
+      case 5:
+        myball_array[i].color = ILI9341_MAGENTA;
+        break;
+      case 6:
+        myball_array[i].color = ILI9341_YELLOW;
+        break;
+      case 7:
+        myball_array[i].color = ILI9341_WHITE;
+        break;
+      }
+    } else {
+      myball_array[i].radius += 3;
+      if ((myball_array[i].radius >= myball_array[i].x) ||
+          (myball_array[i].radius >= myball_array[i].y) ||
+          (myball_array[i].radius >= 320 - myball_array[i].x) ||
+          (myball_array[i].radius >= 240 - myball_array[i].y) ||
+          (myball_array[i].radius >= 40))
+        myball_array[i].radius = -1;
+    }
+  }
+}
+
+void update_rand(int my_modulo) { asm_rand = rand() % my_modulo; }
+
 /* USER CODE END 0 */
 
 /**
@@ -114,7 +162,7 @@ int main(void) {
 
   draw_ball_3D(&myball);
 
-  //int i;
+  // int i;
 
   // for (i = 0; i < MAX_BALL; i++) {
   //  myball_array[i].radius = -1;
@@ -136,11 +184,10 @@ int main(void) {
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+    draw_all_ball_3D(myball_array, MAX_BALL);
+    update_myball_array();
+    HAL_Delay(1000);
   }
-  /* USER CODE END 3 */
 }
 
 /**
