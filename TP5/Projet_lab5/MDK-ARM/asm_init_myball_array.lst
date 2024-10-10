@@ -1,0 +1,85 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 PRESERVE8
+    2 00000000                 AREA             |.text|, CODE, READONLY
+    3 00000000                 EXPORT           asm_init_myball_array
+    4 00000000                 IMPORT           myball_array
+    5 00000000         asm_init_myball_array
+                               PROC
+    6 00000000 4815            LDR              r0, =myball_array
+    7 00000002 F04F 013C       MOV              r1, #60
+    8 00000006 F840 1B04       STR              r1, [r0], #4
+    9 0000000A F840 1B04       STR              r1, [r0], #4
+   10 0000000E F04F 011E       MOV              r1, #30
+   11 00000012 F820 1B02       STRH             r1, [r0], #2
+   12 00000016 F04F 011F       MOV              r1, #0x1F   ;blue
+   13 0000001A F820 1B02       STRH             r1, [r0], #2
+   14 0000001E F04F 0150       MOV              r1, #80
+   15 00000022 F840 1B04       STR              r1, [r0], #4
+   16 00000026 F840 1B04       STR              r1, [r0], #4
+   17 0000002A F04F 011E       MOV              r1, #30
+   18 0000002E F820 1B02       STRH             r1, [r0], #2
+   19 00000032 F44F 61FC       MOV              r1, #0x07E0 ;green
+   20 00000036 F820 1B02       STRH             r1, [r0], #2
+   21 0000003A F04F 0164       MOV              r1, #100
+   22 0000003E F840 1B04       STR              r1, [r0], #4
+   23 00000042 F840 1B04       STR              r1, [r0], #4
+   24 00000046 F04F 011E       MOV              r1, #30
+   25 0000004A F820 1B02       STRH             r1, [r0], #2
+   26 0000004E F44F 4178       MOV              r1, #0xF800 ;red
+   27 00000052 F820 1B02       STRH             r1, [r0], #2
+   28 00000056 4770            BX               lr
+   29 00000058                 ENDP
+   30 00000058                 END
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
+--depend=fd_stm32\asm_init_myball_array.d -ofd_stm32\asm_init_myball_array.o -I
+.\RTE\_FD_STM32 -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\
+Core\Include -IC:\Users\isaac\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1
+\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --predef
+ine="__UVISION_VERSION SETA 540" --predefine="STM32F446xx SETA 1" --predefine="
+_RTE_ SETA 1" --list=asm_init_myball_array.lst ..\Core\Src\asm_init_myball_arra
+y.asm
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 2 in file ..\Core\Src\asm_init_myball_array.asm
+   Uses
+      None
+Comment: .text unused
+asm_init_myball_array 00000000
+
+Symbol: asm_init_myball_array
+   Definitions
+      At line 5 in file ..\Core\Src\asm_init_myball_array.asm
+   Uses
+      At line 3 in file ..\Core\Src\asm_init_myball_array.asm
+Comment: asm_init_myball_array used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+myball_array 00000000
+
+Symbol: myball_array
+   Definitions
+      At line 4 in file ..\Core\Src\asm_init_myball_array.asm
+   Uses
+      At line 6 in file ..\Core\Src\asm_init_myball_array.asm
+Comment: myball_array used once
+1 symbol
+340 symbols in table
