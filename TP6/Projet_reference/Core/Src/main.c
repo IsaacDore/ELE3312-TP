@@ -101,10 +101,10 @@ int main(void) {
   MX_SPI1_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
-                       Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
-                       TFT_DC_GPIO_Port, TFT_DC_Pin, isoLandscape, NULL, NULL,
-                       NULL, NULL, itsNotSupported, itnNormalized);
+  _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
+                        Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
+                        TFT_DC_GPIO_Port, TFT_DC_Pin, isoLandscape, NULL, NULL,
+                        NULL, NULL, itsNotSupported, itnNormalized);
   ili9341_fill_screen(_screen, ILI9341_BLACK);
   ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
                                    ILI9341_BLACK, 0, 0};
@@ -128,8 +128,8 @@ int main(void) {
     HAL_Delay(5000);
   }
   /* USER CODE BEGIN 3 */
-}
-/* USER CODE END 3 */
+
+  /* USER CODE END 3 */
 }
 
 /**

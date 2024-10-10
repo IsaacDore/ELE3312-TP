@@ -1,14 +1,22 @@
 TP6_PRE_PATH = ./TP6/Projet_reference
 TP6_PRE_UV_PATH = $(TP6_PRE_PATH)/MDK-ARM
 TP6_PRE_PROJ_NAME = FD_STM32.uvprojx
-TP6_PRE_BUILD_OUT = $(TP6_PRE_UV_PATH)/log/build.log
-TP6_PRE_FLASH_OUT = $(TP6_PRE_UV_PATH)/log/flash.log
+BUILD_OUT = .\log\build.log
+FLASH_OUT = .\log\flash.log
+TP6_PRE_BUILD_OUT = $(TP6_PRE_UV_PATH)\$(BUILD_OUT)
+TP6_PRE_FLASH_OUT = $(TP6_PRE_UV_PATH)\$(FLASH_OUT)
 TP6_PRE_PROJ_PATH = $(TP6_PRE_UV_PATH)/$(TP6_PRE_PROJ_NAME)
+TP6_PRE_BUILD_ARTEFACTS = $(TP6_PRE_UV_PATH)/FD_STM32/*
 
 $(TP6_PRE_BUILD_OUT): $(TP6_PRE_PATH)/Core/* $(TP6_PRE_PROJ_PATH)
-	UV4 -b $(TP6_PRE_PROJ_PATH) -o $(TP6_PRE_BUILD_OUT)
-	type $(TP6_PRE_BUILD_OUT)
+# gotta change working-dir because ARM cant be fucked to hire a software engineer
+	cd  $(TP6_PRE_UV_PATH) && \
+	UV4 -b $(TP6_PRE_PROJ_NAME) -o $(BUILD_OUT) & \
+	type $(BUILD_OUT) && \
+	UV4 -b $(TP6_PRE_PROJ_NAME)
 
 Pre-TP6: $(TP6_PRE_BUILD_OUT) $(TP6_PRE_PROJ_PATH)
-	UV4 -f $(TP6_PRE_PROJ_PATH) -o $(TP6_PRE_FLASH_OUT)
-	type $(TP6_PRE_FLASH_OUT)
+	cd  $(TP6_PRE_UV_PATH) && \
+	UV4 -f $(TP6_PRE_PROJ_NAME) -o $(FLASH_OUT) & \
+	type $(FLASH_OUT) && \
+	UV4 -f $(TP6_PRE_PROJ_NAME)
