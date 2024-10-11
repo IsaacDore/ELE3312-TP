@@ -881,9 +881,9 @@ E\_FD_STM32 -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.15.0\Inclu
 de -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.15.0\PrivateInclude
  -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include -I
 C:\Users\isaac\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\
-Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_
-VERSION SETA 540" --predefine="STM32F446xx SETA 1" --predefine="_RTE_ SETA 1" -
--list=startup_stm32f446xx.lst startup_stm32f446xx.s
+Device\ST\STM32F4xx\Include --predefine="__UVISION_VERSION SETA 540" --predefin
+e="STM32F446xx SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32f446xx.ls
+t startup_stm32f446xx.s
 
 
 
@@ -2040,4 +2040,4 @@ Symbol: __use_two_region_memory
       None
 Comment: __use_two_region_memory unused
 3 symbols
-454 symbols in table
+453 symbols in table
