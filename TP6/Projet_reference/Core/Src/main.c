@@ -118,7 +118,7 @@ int main(void) {
   ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
                                    ILI9341_BLACK, 0, 0};
 
-  arm_fir_init_f32(&fir_inst, 16, fir_tabs, &state_buf, 1);
+  arm_fir_init_f32(&fir_inst, 16, fir_tabs, state_buf, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -136,7 +136,7 @@ int main(void) {
       // draw value
       ili9341_draw_pixel(_screen, ILI9341_BLUE, x, (int)(120 - value));
 
-      arm_fir_f32(&fir_inst, &tab_value, &tab_fir_value, 1);
+      arm_fir_f32(&fir_inst, tab_value, tab_fir_value, 1);
 
       // draw value through filter
       ili9341_draw_pixel(_screen, ILI9341_RED, x,
