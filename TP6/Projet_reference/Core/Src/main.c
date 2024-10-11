@@ -26,6 +26,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define ARM_MATH_CM4
+#include "arm_math.h"
+
 #include "ili9341.h"
 #include "ili9341_gfx.h"
 #include "stdio.h"
@@ -124,6 +127,25 @@ int main(void) {
       ili9341_draw_string(_screen, text_attr, buffer);
       ili9341_draw_pixel(_screen, ILI9341_BLUE, x, (int)(120 - value));
       HAL_Delay(100);
+    }
+    arm_rfft_fast_instance_f32 fftInstance;
+    arm_rfft_fast_init_f32(&fftInstance, 256);
+    arm_rfft_fast_f32(&fftInstance, tab_value, FFT_value, 0);
+    arm_cmplx_mag_f32(FFT_value, abs_value, 128);
+    float max_value;
+    unsigned int max_index;
+    arm_max_f32(abs_value, 128, &max_value, &max_index);
+    scale = 120.0 / max_value;
+    ili9341_fill_screen(_screen, ILI9341_BLACK);
+    for (int x = 0; x < 128; x++) {
+      float value = abs_value[x] * scale;
+      ili9341_draw_line(_screen, ILI9341_RED, 2 * x, (int)(240 - value), 2 * x,
+                        239);
+      ili9341_draw_line(_screen, ILI9341_RED, 2 * x + 1, (int)(240 - value),
+                        2 * x + 1, 239);
+      char bufferFFT[20] = {0};
+      sprintf(bufferFFT, "FFT : %-6.2f ", value);
+      ili9341_draw_string(_screen, text_attr, bufferFFT);
     }
     HAL_Delay(5000);
   }

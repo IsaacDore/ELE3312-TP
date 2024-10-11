@@ -877,11 +877,13 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
 --depend=fd_stm32\startup_stm32f446xx.d -ofd_stm32\startup_stm32f446xx.o -I.\RT
-E\_FD_STM32 -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core
-\Include -IC:\Users\isaac\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Dri
-vers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --predefine=
-"__UVISION_VERSION SETA 540" --predefine="STM32F446xx SETA 1" --predefine="_RTE
-_ SETA 1" --list=startup_stm32f446xx.lst startup_stm32f446xx.s
+E\_FD_STM32 -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.15.0\Inclu
+de -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.15.0\PrivateInclude
+ -IC:\Users\isaac\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include -I
+C:\Users\isaac\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\
+Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_
+VERSION SETA 540" --predefine="STM32F446xx SETA 1" --predefine="_RTE_ SETA 1" -
+-list=startup_stm32f446xx.lst startup_stm32f446xx.s
 
 
 

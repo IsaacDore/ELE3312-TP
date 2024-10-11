@@ -15,8 +15,12 @@ $(TP6_PRE_BUILD_OUT): $(TP6_PRE_PATH)/Core/* $(TP6_PRE_PROJ_PATH)
 	type $(BUILD_OUT) && \
 	UV4 -b $(TP6_PRE_PROJ_NAME)
 
-Pre-TP6: $(TP6_PRE_BUILD_OUT) $(TP6_PRE_PROJ_PATH)
+pretp6: $(TP6_PRE_BUILD_OUT) $(TP6_PRE_PROJ_PATH)
 	cd  $(TP6_PRE_UV_PATH) && \
 	UV4 -f $(TP6_PRE_PROJ_NAME) -o $(FLASH_OUT) & \
 	type $(FLASH_OUT) && \
 	UV4 -f $(TP6_PRE_PROJ_NAME)
+
+pretp6-keil:
+	cd  $(TP6_PRE_UV_PATH) && \
+	UV4 $(TP6_PRE_PROJ_NAME)
