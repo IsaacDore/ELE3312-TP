@@ -1,3 +1,11 @@
+/*
+  laboratoire = 6
+  groupe = 2
+  date = 2024/octobre/11
+  auteurs = Isaac Doré, Arnaud Gagner, Justin Botbol
+  équipe = 05
+*/
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
@@ -58,9 +66,9 @@ float tab_value[256];
 float FFT_value[256];
 float abs_value[128];
 // matlab : a = fir1(15, 2*1.5/13.333)
-float fir_tabs[16] = {
-    -0.0028 ,  -0.0059,   -0.0092,   -0.0011,    0.0333,    0.0967,    0.1698,    0.2193,    0.2193,    0.1698,    0.0967,    0.0333,   -0.0011,   -0.0092,   -0.0059,   -0.0028
-};
+float fir_tabs[16] = {-0.0028, -0.0059, -0.0092, -0.0011, 0.0333, 0.0967,
+                      0.1698,  0.2193,  0.2193,  0.1698,  0.0967, 0.0333,
+                      -0.0011, -0.0092, -0.0059, -0.0028};
 float tab_fir_value[256];
 float state_buf[16];
 /* USER CODE END PV */;
