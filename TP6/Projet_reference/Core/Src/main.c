@@ -57,13 +57,13 @@ arm_fir_instance_f32 fir_inst;
 float tab_value[256];
 float FFT_value[256];
 float abs_value[128];
+// matlab : a = fir1(15, 2*1.5/13.333)
 float fir_tabs[16] = {
-    1.0000,  0.0950,  -0.8422, -0.1897, 0.3686,  0.0856,  -0.0458, -0.0044,
-    -0.0028, -0.0025, -0.0004, -0.0023, -0.0001, -0.0022, -0.0000, -0.0022,
+    -0.0028 ,  -0.0059,   -0.0092,   -0.0011,    0.0333,    0.0967,    0.1698,    0.2193,    0.2193,    0.1698,    0.0967,    0.0333,   -0.0011,   -0.0092,   -0.0059,   -0.0028
 };
 float tab_fir_value[256];
 float state_buf[16];
-/* USER CODE END PV */
+/* USER CODE END PV */;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -128,7 +128,7 @@ int main(void) {
     float scale = 120.0 / 4095.0;
     for (int x = 0; x < 256; x++) {
       HAL_ADC_Start(&hadc1);
-      HAL_ADC_PollForConversion(&hadc1, 100);
+      HAL_ADC_PollForConversion(&hadc1, 75);
       float value = tab_value[x] = HAL_ADC_GetValue(&hadc1) * scale;
       char buffer[15] = {0};
       sprintf(buffer, "Value : %-6.2f", value);
@@ -142,11 +142,11 @@ int main(void) {
       ili9341_draw_pixel(_screen, ILI9341_RED, x,
                          (int)(120 - tab_fir_value[x]));
 
-      HAL_Delay(100);
+      HAL_Delay(75);
     }
     arm_rfft_fast_instance_f32 fftInstance;
     arm_rfft_fast_init_f32(&fftInstance, 256);
-    arm_rfft_fast_f32(&fftInstance, tab_value, FFT_value, 0);
+    arm_rfft_fast_f32(&fftInstance, tab_fir_value, FFT_value, 0);
     arm_cmplx_mag_f32(FFT_value, abs_value, 128);
     float max_value;
     unsigned int max_index;
