@@ -8,7 +8,7 @@ TP6_PRE_FLASH_OUT = $(TP6_PRE_UV_PATH)\$(FLASH_OUT)
 TP6_PRE_PROJ_PATH = $(TP6_PRE_UV_PATH)/$(TP6_PRE_PROJ_NAME)
 TP6_PRE_BUILD_ARTEFACTS = $(TP6_PRE_UV_PATH)/FD_STM32/*
 
-$(TP6_PRE_BUILD_OUT): $(TP6_PRE_PATH)/Core/* $(TP6_PRE_PROJ_PATH)
+$(TP6_PRE_BUILD_OUT): $(TP6_PRE_PATH)/Core/Src/* $(TP6_PRE_PROJ_PATH) 
 # gotta change working-dir because ARM cant be fucked to hire a software engineer
 	cd  $(TP6_PRE_UV_PATH) && \
 	UV4 -b $(TP6_PRE_PROJ_NAME) -o $(BUILD_OUT) & \

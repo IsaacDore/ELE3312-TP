@@ -53,10 +53,16 @@
 
 /* USER CODE BEGIN PV */
 ili9341_t *_screen;
+arm_fir_instance_f32 fir_inst;
 float tab_value[256];
 float FFT_value[256];
 float abs_value[128];
-
+float fir_tabs[16] = {
+    1.0000,  0.0950,  -0.8422, -0.1897, 0.3686,  0.0856,  -0.0458, -0.0044,
+    -0.0028, -0.0025, -0.0004, -0.0023, -0.0001, -0.0022, -0.0000, -0.0022,
+};
+float tab_fir_value[256];
+float state_buf[16];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,6 +117,8 @@ int main(void) {
   ili9341_fill_screen(_screen, ILI9341_BLACK);
   ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
                                    ILI9341_BLACK, 0, 0};
+
+  arm_fir_init_f32(&fir_inst, 16, fir_tabs, &state_buf, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,7 +133,15 @@ int main(void) {
       char buffer[15] = {0};
       sprintf(buffer, "Value : %-6.2f", value);
       ili9341_draw_string(_screen, text_attr, buffer);
+      // draw value
       ili9341_draw_pixel(_screen, ILI9341_BLUE, x, (int)(120 - value));
+
+      arm_fir_f32(&fir_inst, &tab_value, &tab_fir_value, 1);
+
+      // draw value through filter
+      ili9341_draw_pixel(_screen, ILI9341_RED, x,
+                         (int)(120 - tab_fir_value[x]));
+
       HAL_Delay(100);
     }
     arm_rfft_fast_instance_f32 fftInstance;
