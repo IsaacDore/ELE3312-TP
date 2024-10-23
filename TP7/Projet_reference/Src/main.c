@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -58,8 +59,8 @@ ili9341_t *_screen;
 float tab_value[256];
 
 volatile int flag_timer_2 = 0; // Experience 1, 2
-//volatile int flag_systick_timer = 0; // Experience 3
-//volatile int current_state = 0; // Experience 3
+volatile int flag_systick_timer = 0; // Experience 3
+volatile int current_state = 0; // Experience 3
 
 /* USER CODE END PV */
 
@@ -75,25 +76,25 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 }
 
 // HAL_SYSTICK_Callback pour l'experience 3
-//void HAL_SYSTICK_Callback(void) {
-//	static int local_time = 0;
-//	local_time++;
-//	
-//	switch (current_state) {
-//		case 0: // state x
-//		if (local_time == 10000) {
-//			local_time = 0; flag_systick_timer = 1; current_state = 1; }
-//			break;
-//		case 1: // state y
-//		if (local_time == 2000) {
-//			local_time = 0; flag_systick_timer = 1; current_state = 2; }
-//			break;
-//		case 2: // state z
-//		if (local_time == 5000) {
-//			local_time = 0; flag_systick_timer = 1; current_state = 0; }
-//			break;
-//	}
-//}
+void HAL_SYSTICK_Callback(void) {
+	static int local_time = 0;
+	local_time++;
+	
+	switch (current_state) {
+		case 0: // state x
+		if (local_time == 10000) {
+			local_time = 0; flag_systick_timer = 1; current_state = 1; }
+			break;
+		case 1: // state y
+		if (local_time == 2000) {
+			local_time = 0; flag_systick_timer = 1; current_state = 2; }
+			break;
+		case 2: // state z
+		if (local_time == 5000) {
+			local_time = 0; flag_systick_timer = 1; current_state = 0; }
+			break;
+	}
+}
 
 /* USER CODE END PFP */
 
@@ -135,6 +136,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	_screen = ili9341_new(
 		&hspi1,
@@ -163,13 +165,13 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		
 		// Experience 1
-		while(flag_timer_2 == 0);
-		flag_timer_2 = 0;
-		ili9341_fill_circle(_screen, ILI9341_WHITE, 160, 120, 20);
-		
-		while(flag_timer_2 == 0);
-		flag_timer_2 = 0;
-		ili9341_fill_circle(_screen, ILI9341_BLACK, 160, 120, 20);
+//		while(flag_timer_2 == 0);
+//		flag_timer_2 = 0;
+//		ili9341_fill_circle(_screen, ILI9341_WHITE, 160, 120, 20);
+//		
+//		while(flag_timer_2 == 0);
+//		flag_timer_2 = 0;
+//		ili9341_fill_circle(_screen, ILI9341_BLACK, 160, 120, 20);
 		
 		// Experience 2
 //		int x;
@@ -190,12 +192,12 @@ int main(void)
 //		}
 		
 		// Experience 3
-//		while(flag_systick_timer == 0);
-//		flag_systick_timer = 0;
-//		
-//		char buffer[15] = {0};
-//		sprintf(buffer, "State : %3i", current_state);
-//		ili9341_draw_string(_screen, text_attr,buffer);
+		while(flag_systick_timer == 0);
+		flag_systick_timer = 0;
+		
+		char buffer[15] = {0};
+		sprintf(buffer, "State : %3i", current_state);
+		ili9341_draw_string(_screen, text_attr,buffer);
   }
   /* USER CODE END 3 */
 }
