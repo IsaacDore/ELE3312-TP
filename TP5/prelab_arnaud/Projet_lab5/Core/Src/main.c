@@ -100,7 +100,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  _screen = ili9341_new(
+   _screen = ili9341_new(
       &hspi1,
       Void_Display_Reset_GPIO_Port, Void_Display_Reset_Pin,
       TFT_CS_GPIO_Port,    TFT_CS_Pin,
