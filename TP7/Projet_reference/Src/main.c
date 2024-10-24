@@ -24,120 +24,93 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "stdio.h"
 
 #define ARM_MATH_CM4
 #include "arm_math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "time.h"
 
 #include "ili9341.h"
 #include "ili9341_gfx.h"
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
 ili9341_t *_screen;
-
 float tab_value[256];
 
-volatile int flag_timer_2 = 0; // Experience 1, 2
-volatile int flag_systick_timer = 0; // Experience 3
-volatile int current_state = 0; // Experience 3
+// WARNING: positions might be wrong (flip y-axis or wrong screen resolution)
+const int screen_width = 320;
+const int screen_height = 240;
+// pig position
+int pig_x;
+int pig_y;
+// bird data
+volatile int vitesse_init = 0;
+volatile float angle_init = 0;
+volatile int current_x = 10;
+volatile int current_y = 230;
+// state & flag
+volatile int end_flag = 0;
+volatile int preparation_state = 0;
 
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
 
-// HAL_TIM_PeriodElapsedCallback pour l'experience 1, 2
+// Timer 2 callback (each 100ms)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if (htim->Instance == TIM2) {
-		flag_timer_2++;
-	}
-}
-
-// HAL_SYSTICK_Callback pour l'experience 3
-void HAL_SYSTICK_Callback(void) {
-	static int local_time = 0;
-	local_time++;
+	if (vitesse_init == 0 && end_flag != 0) { return; }
 	
-	switch (current_state) {
-		case 0: // state x
-		if (local_time == 10000) {
-			local_time = 0; flag_systick_timer = 1; current_state = 1; }
+	// TODO: update and draw new position
+	
+	
+	// checks defeat conditions
+	if ((current_x == 160 && current_y >= 120) // hits the wall
+		|| current_x > 320-10-1 || current_y > 240-10-1 || current_y < 0+10) {
+		end_flag = 2;
+	}
+	// checks victory condition
+	if ((current_x >= pig_x - 20 && current_x <= pig_x + 20)
+		&& (current_y >= pig_y - 20 && current_y <= pig_y + 20)) {		// TODO: fix to circle hitbox
+		end_flag = 1;
+	}
+}
+
+void HAL_SYSTICK_Callback(void) {
+	static int time_while_pressed = 0;
+	
+	switch (preparation_state)
+	{
+		case 0:	// state: repos
+			if (/*TODO: buttonIsPressed*/time_while_pressed==0) {
+				time_while_pressed= 1;
+				preparation_state++;
+			}
 			break;
-		case 1: // state y
-		if (local_time == 2000) {
-			local_time = 0; flag_systick_timer = 1; current_state = 2; }
+		case 1: // état: comptage
+			if (/*TODO: buttonWasReleased*/time_while_pressed==0) {
+				preparation_state++;
+			}
+			time_while_pressed++;
 			break;
-		case 2: // state z
-		if (local_time == 5000) {
-			local_time = 0; flag_systick_timer = 1; current_state = 0; }
+		case 2: // état: fin de comptage
+			vitesse_init = time_while_pressed;
 			break;
 	}
 }
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
   MX_TIM2_Init();
-  /* USER CODE BEGIN 2 */
+	
+	// srand(time(NULL));
+	
 	_screen = ili9341_new(
 		&hspi1,
 		Void_Display_Reset_GPIO_Port, Void_Display_Reset_Pin,
@@ -152,18 +125,42 @@ int main(void)
 	ili9341_fill_screen(_screen, ILI9341_BLACK);
 	ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE, ILI9341_BLACK,0,0};
 
-	HAL_TIM_Base_Start_IT(&htim2); // Experience 1, 2
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+	HAL_TIM_Base_Start_IT(&htim2);
+	
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+		float scale = 90.0/4095.0;
+		pig_x = rand() % (300 - 180 + 1) + 180;		// random int in range(min,max): % (max - min + 1) + min
+		pig_y = 240 - (rand() % (140 - 20 + 1) + 20);			// knowing the pig has r=20 and the zone is x:[160;320] & y:[0;240]
 		
+		ili9341_draw_line(_screen, ILI9341_ORANGE, 160, 120-1, 160, 0);
+		ili9341_fill_circle(_screen, ILI9341_WHITE, 10, 230-1, 10);
+		ili9341_fill_circle(_screen, ILI9341_PINK, pig_x, pig_y, 20);
+		
+		// waits for user to set a speed value before continuing
+		while (vitesse_init == 0);
+		
+		// calculate the angle of the bird's trajectory depending on user input
+		HAL_ADC_Start(&hadc1); 
+		HAL_ADC_PollForConversion(&hadc1,100); 
+		angle_init = HAL_ADC_GetValue(&hadc1)*scale; 
+		
+		// TODO: all the trajectory
+		
+		while (end_flag == 0);
+		
+		ili9341_fill_screen(_screen, ILI9341_BLACK);
+		char buffer[15] = {0};
+		if (end_flag == 1) {
+			sprintf(buffer, "Victoire :)");
+			ili9341_draw_string(_screen, text_attr,buffer);
+		}
+		else {
+			sprintf(buffer, "Defaite...");
+			ili9341_draw_string(_screen, text_attr,buffer);
+		}
+		
+		// Prelab stuff
 		// Experience 1
 //		while(flag_timer_2 == 0);
 //		flag_timer_2 = 0;
@@ -192,14 +189,13 @@ int main(void)
 //		}
 		
 		// Experience 3
-		while(flag_systick_timer == 0);
-		flag_systick_timer = 0;
-		
-		char buffer[15] = {0};
-		sprintf(buffer, "State : %3i", current_state);
-		ili9341_draw_string(_screen, text_attr,buffer);
+//		while(flag_systick_timer == 0);
+//		flag_systick_timer = 0;
+//		
+//		char buffer[15] = {0};
+//		sprintf(buffer, "State : %3i", current_state);
+//		ili9341_draw_string(_screen, text_attr,buffer);
   }
-  /* USER CODE END 3 */
 }
 
 /**

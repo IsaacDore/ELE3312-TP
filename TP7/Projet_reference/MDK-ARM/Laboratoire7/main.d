@@ -59,4 +59,6 @@ laboratoire7/main.o: ..\Src\main.c ..\Inc\main.h \
   C:\Users\User\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h \
   C:\Users\User\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h \
   C:\Users\User\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h \
-  ..\Inc\ili9341.h ..\Inc\ili9341_gfx.h ..\Inc\ili9341_font.h
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\time.h ..\Inc\ili9341.h \
+  ..\Inc\ili9341_gfx.h ..\Inc\ili9341_font.h
