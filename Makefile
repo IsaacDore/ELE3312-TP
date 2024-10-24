@@ -38,12 +38,15 @@ tp6-keil:
 	cd  $(TP6_UV_PATH) && \
 	UV4 $(TP6_PROJ_FILE_NAME)
 
-$(TP7_BUILD_OUT): $(TP7_PATH)/Src/* $(TP7_PROJ_PATH) 
+$(TP7_BUILD_OUT): tp7-gen-seed $(TP7_PATH)/Src/* $(TP7_PROJ_PATH) 
 # gotta change working-dir because ARM cant be fucked to hire a software engineer
 	cd  $(TP7_UV_PATH) && \
 	UV4 -b $(TP7_PROJ_FILE_NAME) -o $(BUILD_OUT) & \
 	type $(BUILD_OUT) && \
 	UV4 -b $(TP7_PROJ_FILE_NAME)
+
+tp7-gen-seed:
+	python ./TP7/gen_seed.py > $(TP7_PATH)/Inc/seed.h
 
 tp7: $(TP7_BUILD_OUT) $(TP7_PROJ_PATH)
 	cd  $(TP7_UV_PATH) && \

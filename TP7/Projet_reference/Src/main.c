@@ -29,6 +29,7 @@
 #define ARM_MATH_CM4
 #include "arm_math.h"
 #include "time.h"
+#include <seed.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -110,7 +111,7 @@ int main(void) {
   MX_ADC1_Init();
   MX_TIM2_Init();
 
-  // srand(time(NULL));
+  srand(SEED);
 
   _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
                         Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
