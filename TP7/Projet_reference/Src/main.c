@@ -109,9 +109,13 @@ int main(void) {
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
+  MX_ADC2_Init();
   MX_TIM2_Init();
 
-  srand(SEED);
+  HAL_ADC_Start(&hadc1);
+  HAL_ADC_PollForConversion(&hadc1, 100);
+  uint32_t instance_seed = HAL_ADC_GetValue(&hadc1);
+  srand(SEED ^ instance_seed);
 
   _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
                         Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
@@ -141,9 +145,9 @@ int main(void) {
       ;
 
     // calculate the angle of the bird's trajectory depending on user input
-    HAL_ADC_Start(&hadc1);
-    HAL_ADC_PollForConversion(&hadc1, 100);
-    angle_init = HAL_ADC_GetValue(&hadc1) * scale;
+    HAL_ADC_Start(&hadc2);
+    HAL_ADC_PollForConversion(&hadc2, 100);
+    angle_init = HAL_ADC_GetValue(&hadc2) * scale;
 
     // TODO: all the trajectory
 
@@ -177,10 +181,10 @@ int main(void) {
     //			while(flag_timer_2 == 0);
     //			flag_timer_2 = 0;
     //
-    //			HAL_ADC_Start(&hadc1);
-    //			HAL_ADC_PollForConversion(&hadc1,100);
+    //			HAL_ADC_Start(&hadc2);
+    //			HAL_ADC_PollForConversion(&hadc2,100);
     //			float value = tab_value[x] =
-    // HAL_ADC_GetValue(&hadc1)*scale;
+    // HAL_ADC_GetValue(&hadc2)*scale;
     //
     //			char buffer[15] = {0};
     //			sprintf(buffer, "Value : %-6.2f",value);
