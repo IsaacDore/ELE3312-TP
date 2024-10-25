@@ -147,8 +147,6 @@ int main(void) {
   HAL_TIM_Base_Start_IT(&htim2);
 
   while (1) {
-    HAL_ADC_Start(&hadc2);
-    HAL_ADC_PollForConversion(&hadc2, 100);
     float scale = 90.0 / 4095.0;
     pig_x = rand() % (300 - 180 + 1) +
             180; // random int in range(min,max): % (max - min + 1) + min
@@ -167,7 +165,8 @@ int main(void) {
 
     sprintf(buffer, "%i", vitesse_init);
     ili9341_draw_string(_screen, text_attr, buffer);
-
+    HAL_ADC_Start(&hadc2);
+    HAL_ADC_PollForConversion(&hadc2, 100);
     // calculate the angle of the bird's trajectory depending on user input
     angle_init = HAL_ADC_GetValue(&hadc2) * scale;
 
