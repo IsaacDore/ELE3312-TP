@@ -1,3 +1,11 @@
+/*
+  laboratoire = 6
+  groupe = 2
+  date = 2024/octobre/25
+  auteurs = Isaac Doré, Arnaud Gagner, Justin Botbol
+  équipe = 05
+*/
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
@@ -53,7 +61,7 @@ volatile int lauch = 0;
 volatile float angle_init = 0;
 volatile float old_x = 0;
 volatile float old_y = 0;
-volatile float current_x = 10;
+volatile float current_x = 12;
 volatile float current_y = 220;
 volatile float vel_x = 0;
 volatile float vel_y = 0;
@@ -71,7 +79,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   }
 
   // TODO: update and draw new position
-  float delta_time = 0.00001;
+  float delta_time = 0.00004;
   current_x += vel_x * delta_time;
   current_y += vel_y * delta_time;
   vel_y += gravity * delta_time;
