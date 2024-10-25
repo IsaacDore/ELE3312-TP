@@ -37,6 +37,8 @@
 #include "ili9341_gfx.h"
 
 ili9341_t *_screen;
+ili9341_text_attr_t text_attr;
+char buffer[15] = {0};
 float tab_value[256];
 
 // WARNING: positions might be wrong (flip y-axis or wrong screen resolution)
@@ -47,9 +49,15 @@ int pig_x;
 int pig_y;
 // bird data
 volatile int vitesse_init = 0;
+volatile int lauch = 0;
 volatile float angle_init = 0;
-volatile int current_x = 10;
-volatile int current_y = 230;
+volatile float old_x = 0;
+volatile float old_y = 0;
+volatile float current_x = 10;
+volatile float current_y = 220;
+volatile float vel_x = 0;
+volatile float vel_y = 0;
+volatile float gravity = 700000;
 // state & flag
 volatile int end_flag = 0;
 volatile int preparation_state = 0;
@@ -58,23 +66,30 @@ void SystemClock_Config(void);
 
 // Timer 2 callback (each 100ms)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-  if (vitesse_init == 0 && end_flag != 0) {
+  if (lauch == 0 && end_flag != 0) {
     return;
   }
 
   // TODO: update and draw new position
+  float delta_time = 0.00001;
+  current_x += vel_x * delta_time;
+  current_y += vel_y * delta_time;
+  vel_y += gravity * delta_time;
 
   // checks defeat conditions
-  if ((current_x == 160 && current_y >= 120) // hits the wall
+  if ((150 <= current_x && current_x <= 170 &&
+       current_y >= 120) // hits the wall
       || current_x > 320 - 10 - 1 || current_y > 240 - 10 - 1 ||
       current_y < 0 + 10) {
     end_flag = 2;
+    vitesse_init = 0;
   }
   // checks victory condition
   if ((current_x >= pig_x - 20 && current_x <= pig_x + 20) &&
       (current_y >= pig_y - 20 &&
        current_y <= pig_y + 20)) { // TODO: fix to circle hitbox
     end_flag = 1;
+    vitesse_init = 0;
   }
 }
 
@@ -83,14 +98,15 @@ void HAL_SYSTICK_Callback(void) {
 
   switch (preparation_state) {
   case 0: // state: repos
-    if (/*TODO: buttonIsPressed*/ time_while_pressed == 0) {
+    if (HAL_GPIO_ReadPin(GPIOC, C1_Pin) == GPIO_PIN_SET &&
+        time_while_pressed == 0) {
       time_while_pressed = 1;
-      preparation_state++;
+      preparation_state = 1;
     }
     break;
   case 1: // �tat: comptage
-    if (/*TODO: buttonWasReleased*/ time_while_pressed == 0) {
-      preparation_state++;
+    if (HAL_GPIO_ReadPin(GPIOC, C1_Pin) == GPIO_PIN_RESET) {
+      preparation_state = 2;
     }
     time_while_pressed++;
     break;
@@ -123,12 +139,16 @@ int main(void) {
                         NULL, NULL, itsNotSupported, itnNormalized);
 
   ili9341_fill_screen(_screen, ILI9341_BLACK);
-  ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
-                                   ILI9341_BLACK, 0, 0};
+  ili9341_text_attr_t text_attr_tmp = {&ili9341_font_11x18, ILI9341_WHITE,
+                                       ILI9341_BLACK, 0, 0};
+
+  text_attr = text_attr_tmp;
 
   HAL_TIM_Base_Start_IT(&htim2);
 
   while (1) {
+    HAL_ADC_Start(&hadc2);
+    HAL_ADC_PollForConversion(&hadc2, 100);
     float scale = 90.0 / 4095.0;
     pig_x = rand() % (300 - 180 + 1) +
             180; // random int in range(min,max): % (max - min + 1) + min
@@ -137,33 +157,57 @@ int main(void) {
                                             // zone is x:[160;320] & y:[0;240]
 
     ili9341_draw_line(_screen, ILI9341_ORANGE, 160, 120 - 1, 160, 0);
-    ili9341_fill_circle(_screen, ILI9341_WHITE, 10, 230 - 1, 10);
+    ili9341_fill_circle(_screen, ILI9341_WHITE, (int)current_x, (int)current_y,
+                        10);
     ili9341_fill_circle(_screen, ILI9341_PINK, pig_x, pig_y, 20);
 
     // waits for user to set a speed value before continuing
     while (vitesse_init == 0)
       ;
 
+    sprintf(buffer, "%i", vitesse_init);
+    ili9341_draw_string(_screen, text_attr, buffer);
+
     // calculate the angle of the bird's trajectory depending on user input
-    HAL_ADC_Start(&hadc2);
-    HAL_ADC_PollForConversion(&hadc2, 100);
     angle_init = HAL_ADC_GetValue(&hadc2) * scale;
 
-    // TODO: all the trajectory
+    sprintf(buffer, "%.2f", angle_init);
+    ili9341_draw_string(_screen, text_attr, buffer);
 
-    while (end_flag == 0)
-      ;
+    HAL_Delay(1000);
+    // TODO: all the trajectory
+    vel_x = fabs(cos(angle_init * PI / 180.0)) * vitesse_init * 30;
+    vel_y = -fabs(sin(angle_init * PI / 180.0)) * vitesse_init * 30;
+
+    current_y = 220;
+    lauch = 1;
+    old_x = current_x;
+    old_y = current_y;
+    while (end_flag == 0) {
+      ili9341_fill_circle(_screen, ILI9341_BLACK, (int)old_x, (int)old_y, 10);
+      old_x = current_x;
+      old_y = current_y;
+      sprintf(buffer, "%.2f;%.2f", vel_x, vel_y);
+      ili9341_draw_string(_screen, text_attr, buffer);
+      // ili9341_fill_screen(_screen, ILI9341_BLACK);
+      // ili9341_fill_circle(_screen, ILI9341_PINK, pig_x, pig_y, 20);
+      // ili9341_draw_line(_screen, ILI9341_ORANGE, 160, 120 - 1, 160, 0);
+      ili9341_fill_circle(_screen, ILI9341_WHITE, (int)current_x,
+                          (int)current_y, 10);
+    }
 
     ili9341_fill_screen(_screen, ILI9341_BLACK);
-    char buffer[15] = {0};
+    // char buffer[15] = {0};
     if (end_flag == 1) {
       sprintf(buffer, "Victoire :)");
       ili9341_draw_string(_screen, text_attr, buffer);
     } else {
-      sprintf(buffer, "Defaite...");
+      sprintf(buffer, "Skill issue.");
       ili9341_draw_string(_screen, text_attr, buffer);
     }
 
+    while (1)
+      ;
     // Prelab stuff
     // Experience 1
     //		while(flag_timer_2 == 0);
