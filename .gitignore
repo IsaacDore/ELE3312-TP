@@ -10,4 +10,8 @@ DebugConfig
 *.uvguix*
 *.scvd
 *.lst
+*.axf
+*.hex
+*.map
+*.lnp
 !*.gitkeep
