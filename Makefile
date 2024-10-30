@@ -21,6 +21,15 @@ TP7_FLASH_OUT = $(TP7_UV_PATH)\$(FLASH_OUT)
 TP7_PROJ_PATH = $(TP7_UV_PATH)/$(TP7_PROJ_FILE_NAME)
 TP7_BUILD_ARTEFACTS = $(TP6_UV_PATH)/$(TP7_PROJ_NAME)/*
 
+TP8_PATH = ./TP8/projet_laboratoire8
+TP8_UV_PATH = $(TP8_PATH)/$(UVPATH)
+TP8_PROJ_NAME = Laboratoire8
+TP8_PROJ_FILE_NAME = $(TP8_PROJ_NAME).uvprojx
+TP8_BUILD_OUT = $(TP8_UV_PATH)\$(BUILD_OUT)
+TP8_FLASH_OUT = $(TP8_UV_PATH)\$(FLASH_OUT)
+TP8_PROJ_PATH = $(TP8_UV_PATH)/$(TP8_PROJ_FILE_NAME)
+TP8_BUILD_ARTEFACTS = $(TP8_UV_PATH)/$(TP8_PROJ_NAME)/*
+
 $(TP6_BUILD_OUT): $(TP6_PATH)/Core/Src/* $(TP6_PROJ_PATH) 
 # gotta change working-dir because ARM cant be fucked to hire a software engineer
 	cd  $(TP6_UV_PATH) && \
@@ -57,3 +66,20 @@ tp7: $(TP7_BUILD_OUT) $(TP7_PROJ_PATH)
 tp7-keil:
 	cd  $(TP7_UV_PATH) && \
 	UV4 $(TP7_PROJ_FILE_NAME)
+
+$(TP8_BUILD_OUT): $(TP8_PATH)/Src/* $(TP8_PROJ_PATH) 
+# gotta change working-dir because ARM cant be fucked to hire a software engineer
+	cd  $(TP8_UV_PATH) && \
+	UV4 -b $(TP8_PROJ_FILE_NAME) -o $(BUILD_OUT) & \
+	type $(BUILD_OUT) && \
+	UV4 -b $(TP8_PROJ_FILE_NAME)
+
+tp8: $(TP8_BUILD_OUT) $(TP8_PROJ_PATH)
+	cd  $(TP8_UV_PATH) && \
+	UV4 -f $(TP8_PROJ_FILE_NAME) -o $(FLASH_OUT) & \
+	type $(FLASH_OUT) && \
+	UV4 -f $(TP8_PROJ_FILE_NAME)
+
+tp8-keil:
+	cd  $(TP8_UV_PATH) && \
+	UV4 $(TP8_PROJ_FILE_NAME)
