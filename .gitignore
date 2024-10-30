@@ -1,6 +1,13 @@
 *log/*
+*.log
+*.d
+*.o
+*.sct
+*.dep
+*.htm
 RTE
 DebugConfig
 *.uvguix*
 *.scvd
+*.lst
 !*.gitkeep

@@ -1,3 +1,11 @@
+/*
+  laboratoire = 6
+  groupe = 2
+  date = 2024/octobre/11
+  auteurs = Isaac Doré, Arnaud Gagner, Justin Botbol
+  équipe = 05
+*/
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
@@ -18,18 +26,20 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma.h"
 #include "gpio.h"
 #include "spi.h"
 #include "usart.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ball.h"
+#define ARM_MATH_CM4
+#include "arm_math.h"
+
 #include "ili9341.h"
 #include "ili9341_gfx.h"
-
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,19 +58,24 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
-#define MAX_BALL 3
-ili9341_t *_screen;
-struct ball_s myball_array[MAX_BALL]; // Add extern for assemby declaration
-/* USER CODE END PV */
 
-void SystemClock_Config(void);
+/* USER CODE BEGIN PV */
+ili9341_t *_screen;
+arm_fir_instance_f32 fir_inst;
+float tab_value[256];
+float FFT_value[256];
+float abs_value[128];
+// matlab : a = fir1(15, 2*1.5/13.333)
+float fir_tabs[16] = {-0.0028, -0.0059, -0.0092, -0.0011, 0.0333, 0.0967,
+                      0.1698,  0.2193,  0.2193,  0.1698,  0.0967, 0.0333,
+                      -0.0011, -0.0092, -0.0059, -0.0028};
+float tab_fir_value[256];
+float state_buf[16];
+/* USER CODE END PV */;
 
 /* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void update_myball_array(void);
-void asm_init_myball_array(void);
-void asm_draw_all_ball_3D(struct ball_s *p_ball, int nb_ball);
 
 /* USER CODE END PFP */
 
@@ -101,39 +116,66 @@ int main(void) {
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_SPI1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
                         Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
                         TFT_DC_GPIO_Port, TFT_DC_Pin, isoLandscape, NULL, NULL,
                         NULL, NULL, itsNotSupported, itnNormalized);
-
   ili9341_fill_screen(_screen, ILI9341_BLACK);
+  ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
+                                   ILI9341_BLACK, 0, 0};
 
-  struct ball_s myball;
-  myball.x = 120;
-  myball.y = 160;
-  myball.radius = 40;
-  myball.color = ILI9341_GREEN;
+  arm_fir_init_f32(&fir_inst, 16, fir_tabs, state_buf, 1);
+  /* USER CODE END 2 */
 
-  draw_ball_3D(&myball);
-
-  for (int i = 0; i < MAX_BALL; i++) {
-    myball_array[i].radius = -1;
-  }
-
-  // Experience 2
-  // Uncomment here after to call the assembly function
-  // asm_init_myball_array();
-
-  // Experience 3
-  // Comment here after to call the assembly function
-  draw_all_ball_3D(myball_array, MAX_BALL);
-
-  // Uncomment here after to call the assembly function
-  // asm_draw_all_ball_3D(myball_array, MAX_BALL);
-
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1) {
+    /* USER CODE END WHILE */
+    float scale = 120.0 / 4095.0;
+    for (int x = 0; x < 256; x++) {
+      HAL_ADC_Start(&hadc1);
+      HAL_ADC_PollForConversion(&hadc1, 75);
+      float value = tab_value[x] = HAL_ADC_GetValue(&hadc1) * scale;
+      char buffer[15] = {0};
+      sprintf(buffer, "Value : %-6.2f", value);
+      ili9341_draw_string(_screen, text_attr, buffer);
+      // draw value
+      ili9341_draw_pixel(_screen, ILI9341_BLUE, x, (int)(120 - value));
+
+      arm_fir_f32(&fir_inst, tab_value + x, tab_fir_value + x, 1);
+
+      // draw value through filter
+      ili9341_draw_pixel(_screen, ILI9341_RED, x,
+                         (int)(120 - tab_fir_value[x]));
+
+      HAL_Delay(75);
+    }
+    arm_rfft_fast_instance_f32 fftInstance;
+    arm_rfft_fast_init_f32(&fftInstance, 256);
+    arm_rfft_fast_f32(&fftInstance, tab_fir_value, FFT_value, 0);
+    arm_cmplx_mag_f32(FFT_value, abs_value, 128);
+    float max_value;
+    unsigned int max_index;
+    arm_max_f32(abs_value, 128, &max_value, &max_index);
+    scale = 120.0 / max_value;
+    ili9341_fill_screen(_screen, ILI9341_BLACK);
+    for (int x = 0; x < 128; x++) {
+      float value = abs_value[x] * scale;
+      ili9341_draw_line(_screen, ILI9341_RED, 2 * x, (int)(240 - value), 2 * x,
+                        239);
+      ili9341_draw_line(_screen, ILI9341_RED, 2 * x + 1, (int)(240 - value),
+                        2 * x + 1, 239);
+      char bufferFFT[20] = {0};
+      sprintf(bufferFFT, "FFT : %-6.2f ", value);
+      ili9341_draw_string(_screen, text_attr, bufferFFT);
+    }
+    HAL_Delay(5000);
   }
+  /* USER CODE BEGIN 3 */
+
+  /* USER CODE END 3 */
 }
 
 /**
