@@ -16,7 +16,7 @@
  ******************************************************************************
  */
 
-#define EXP1
+#define EXP2
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -28,7 +28,6 @@
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
-
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -59,6 +58,15 @@
 /* USER CODE BEGIN PV */
 ili9341_t *_screen;
 
+const float XX = 350.0;
+const float YY = 1450.0;
+const uint32_t STEPS = 6;
+const uint32_t ZZ = 500;
+volatile int step = 0;
+int prev_step = 0;
+float step_freq = 350;
+float step_mul = 1.0;
+
 #define TABLE_LENGTH 10000
 uint32_t tab_value[TABLE_LENGTH];
 volatile int flag_done = 0;
@@ -68,6 +76,40 @@ volatile int flag_done = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
+void fill_table_sqr_wave(float freq) {
+  for (int i = 0; i < TABLE_LENGTH; i++) {
+    int time_ms = i;
+    int wl = (1.0 / freq) * 10000;
+    float value = (time_ms % wl) < (wl / 2) ? 4095.0 : 0.0;
+    tab_value[i] = (int)value;
+  }
+}
+
+void HAL_SYSTICK_Callback(void) {
+  static uint32_t ms_elapsed = 0;
+  static uint8_t rev = 0;
+  ms_elapsed++;
+  if (ms_elapsed > ZZ) {
+    ms_elapsed = 0;
+    if (rev) {
+      step--;
+      if (step == 0) {
+        rev = 0;
+      }
+    } else {
+      step++;
+      if (step >= (STEPS)) {
+        rev = 1;
+      }
+    }
+  }
+}
+
+void HAL_DACEx_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac) {
+  HAL_DAC_Start_DMA(hdac, DAC_CHANNEL_1, tab_value, TABLE_LENGTH,
+                    DAC_ALIGN_12B_R);
+}
 
 /* USER CODE END PFP */
 
@@ -111,6 +153,7 @@ int main(void) {
   MX_ADC1_Init();
   MX_TIM2_Init();
   MX_DAC_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
                         Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
@@ -120,6 +163,8 @@ int main(void) {
   ili9341_fill_screen(_screen, ILI9341_BLACK);
   ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
                                    ILI9341_BLACK, 0, 0};
+
+  step_mul = powf(YY / XX, 1.0 / 6.0);
 
   /* USER CODE END 2 */
 
@@ -203,6 +248,22 @@ int main(void) {
 #ifdef EXP2
 // Tout se fait tout seul par DMA
 #endif
+
+    if (prev_step != step) {
+      char buf[80];
+      step_freq = XX * powf(step_mul, step);
+      prev_step = step;
+      sprintf(buf, "freq:%.2f\r\n", step_freq);
+      ili9341_text_attr_t text_attr = {&ili9341_font_11x18, ILI9341_WHITE,
+                                       ILI9341_BLACK, 0, 40};
+      ili9341_draw_string(_screen, text_attr, buf);
+      sprintf(buf, "step:%i\r\n", step);
+      ili9341_text_attr_t text_attr3 = {&ili9341_font_11x18, ILI9341_WHITE,
+                                        ILI9341_BLACK, 0, 120};
+      ili9341_draw_string(_screen, text_attr3, buf);
+      fill_table_sqr_wave(step_freq);
+    }
+
     // END Experience 2
   }
   /* USER CODE END 3 */
