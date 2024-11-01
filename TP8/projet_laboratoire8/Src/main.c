@@ -62,6 +62,7 @@ const float XX = 350.0;
 const float YY = 1450.0;
 const uint32_t STEPS = 6;
 const uint32_t ZZ = 500;
+const float k = 0.5;
 volatile int step = 0;
 int prev_step = 0;
 float step_freq = 350;
@@ -81,7 +82,8 @@ void fill_table_sqr_wave(float freq) {
   for (int i = 0; i < TABLE_LENGTH; i++) {
     int time_ms = i;
     int wl = (1.0 / freq) * 10000;
-    float value = (time_ms % wl) < (wl / 2) ? 4095.0 : 0.0;
+    float value = (time_ms % wl) < (wl / 2) ? 2047.0 : 0.0;
+    value *= 1.0 + k * sinf(2 * 3.1415 * time_ms / 5000);
     tab_value[i] = (int)value;
   }
 }
