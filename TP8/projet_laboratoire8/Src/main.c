@@ -106,7 +106,7 @@ void HAL_SYSTICK_Callback(void) {
   }
 }
 
-void HAL_DACEx_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac) {
+void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac) {
   HAL_DAC_Start_DMA(hdac, DAC_CHANNEL_1, tab_value, TABLE_LENGTH,
                     DAC_ALIGN_12B_R);
 }
