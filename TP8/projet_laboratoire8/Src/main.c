@@ -68,7 +68,7 @@ int prev_step = 0;
 float step_freq = 350;
 float step_mul = 1.0;
 
-#define TABLE_LENGTH 10000
+#define TABLE_LENGTH 20000
 uint32_t tab_value[TABLE_LENGTH];
 volatile int flag_done = 0;
 
@@ -81,9 +81,9 @@ void SystemClock_Config(void);
 void fill_table_sqr_wave(float freq) {
   for (int i = 0; i < TABLE_LENGTH; i++) {
     int time_ms = i;
-    int wl = (1.0 / freq) * 10000;
+    int wl = (1.0 / freq) * 40000;
     float value = (time_ms % wl) < (wl / 2) ? 2047.0 : 0.0;
-    value *= 1.0 + k * sinf(2 * 3.1415 * time_ms / 5000);
+    value *= 1.0 + k * sinf(2 * 3.1415 * time_ms / 20000);
     tab_value[i] = (int)value;
   }
 }
