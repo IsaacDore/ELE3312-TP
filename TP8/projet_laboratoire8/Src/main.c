@@ -22,11 +22,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dac.h"
 #include "dma.h"
 #include "gpio.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -108,6 +110,7 @@ int main(void) {
   MX_SPI1_Init();
   MX_ADC1_Init();
   MX_TIM2_Init();
+  MX_DAC_Init();
   /* USER CODE BEGIN 2 */
   _screen = ili9341_new(&hspi1, Void_Display_Reset_GPIO_Port,
                         Void_Display_Reset_Pin, TFT_CS_GPIO_Port, TFT_CS_Pin,
